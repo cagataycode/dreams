@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { AppwriteService } from './appwrite.service';
+import { SupabaseService } from './supabase.service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly appwriteService: AppwriteService,
+    private readonly supabaseService: SupabaseService,
   ) {}
 
   @Get()
@@ -22,18 +22,14 @@ export class AppController {
     };
   }
 
-  @Get('appwrite')
-  getAppwriteInfo(): {
-    projectId: string;
-    projectName: string;
-    endpoint: string;
+  @Get('supabase')
+  getSupabaseInfo(): {
+    url: string;
     connected: boolean;
   } {
     return {
-      projectId: process.env.APPWRITE_PROJECT_ID || '',
-      projectName: process.env.APPWRITE_PROJECT_NAME || '',
-      endpoint: process.env.APPWRITE_ENDPOINT || '',
-      connected: !!this.appwriteService.getClient(),
+      url: process.env.SUPABASE_URL || '',
+      connected: !!this.supabaseService.getClient(),
     };
   }
 }
