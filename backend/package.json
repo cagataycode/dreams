@@ -25,7 +25,10 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^10.0.0",
-    "appwrite": "^20.0.0",
+    "@supabase/supabase-js": "^2.78.0",
+    "@types/cookie-parser": "^1.4.9",
+    "cookie-parser": "^1.4.7",
+    "openai": "^6.9.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },
