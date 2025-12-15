@@ -57,7 +57,8 @@ export class AuthService {
       }
 
       return {
-        message: 'Account created! Please check your email for verification link.',
+        message:
+          'Account created! Please check your email for verification link.',
       };
     } catch (error) {
       console.error('Registration error:', error);
@@ -68,7 +69,7 @@ export class AuthService {
   async logout(accessToken: string): Promise<{ message: string }> {
     try {
       const supabase = this.supabaseService.getClient();
-      supabase.auth.setSession({
+      await supabase.auth.setSession({
         access_token: accessToken,
         refresh_token: '',
       });
@@ -96,7 +97,10 @@ export class AuthService {
         refresh_token: '',
       });
 
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
 
       if (error) {
         throw error;
@@ -112,13 +116,16 @@ export class AuthService {
   async resendVerification(accessToken: string): Promise<{ message: string }> {
     try {
       const supabase = this.supabaseService.getClient();
-      supabase.auth.setSession({
+      await supabase.auth.setSession({
         access_token: accessToken,
         refresh_token: '',
       });
 
       // Get user to get their email
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
       if (userError || !user) {
         throw new Error('User not found');
@@ -142,14 +149,15 @@ export class AuthService {
     }
   }
 
-  async verifyEmail(token: string, type: string = 'email'): Promise<{ message: string }> {
+  async verifyEmail(
+    token: string,
+    type: string = 'email',
+  ): Promise<{ message: string }> {
     try {
-      const { error } = await this.supabaseService
-        .getClient()
-        .auth.verifyOtp({
-          token_hash: token,
-          type: type as any,
-        });
+      const { error } = await this.supabaseService.getClient().auth.verifyOtp({
+        token_hash: token,
+        type: type as any,
+      });
 
       if (error) {
         throw error;

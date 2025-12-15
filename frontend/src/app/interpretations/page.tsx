@@ -982,13 +982,17 @@ export default function InterpretationsPage() {
                                 <div className="mt-2">
                                   {item.interpretation.interpretation_data ? (
                                     <StructuredInterpretation
-                                      data={item.interpretation.interpretation_data}
+                                      data={
+                                        item.interpretation.interpretation_data
+                                      }
                                       theme={theme}
                                       compact
                                     />
                                   ) : (
                                     <LegacyInterpretation
-                                      text={item.interpretation.interpretation_text}
+                                      text={
+                                        item.interpretation.interpretation_text
+                                      }
                                       theme={theme}
                                     />
                                   )}
