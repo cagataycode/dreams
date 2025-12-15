@@ -2,8 +2,10 @@
 
 import React, { useState } from "react";
 import { useAuth } from "../../lib/auth-context";
+import { useTheme } from "../../lib/theme-context";
 
 export default function RegisterForm() {
+  const { theme } = useTheme();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +40,8 @@ export default function RegisterForm() {
       <div>
         <label
           htmlFor="name"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium"
+          style={{ color: theme.text }}
         >
           Name
         </label>
@@ -48,13 +51,19 @@ export default function RegisterForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          className="mt-1 block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none transition-theme"
+          style={{
+            backgroundColor: theme.background,
+            border: `1px solid ${theme.border}`,
+            color: theme.text,
+          }}
         />
       </div>
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium"
+          style={{ color: theme.text }}
         >
           Email
         </label>
@@ -64,13 +73,19 @@ export default function RegisterForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          className="mt-1 block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none transition-theme"
+          style={{
+            backgroundColor: theme.background,
+            border: `1px solid ${theme.border}`,
+            color: theme.text,
+          }}
         />
       </div>
       <div>
         <label
           htmlFor="password"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium"
+          style={{ color: theme.text }}
         >
           Password
         </label>
@@ -80,7 +95,12 @@ export default function RegisterForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          className="mt-1 block w-full px-3 py-2 rounded-md shadow-sm focus:outline-none transition-theme"
+          style={{
+            backgroundColor: theme.background,
+            border: `1px solid ${theme.border}`,
+            color: theme.text,
+          }}
         />
       </div>
       {error && <div className="text-red-600 text-sm">{error}</div>}
@@ -99,7 +119,24 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+        className="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-sm font-medium transition-theme disabled:opacity-50"
+        style={{
+          backgroundColor: theme.text,
+          color: theme.background,
+          border: `1px solid ${theme.border}`,
+        }}
+        onMouseEnter={(e) => {
+          if (!loading) {
+            e.currentTarget.style.backgroundColor = theme.background;
+            e.currentTarget.style.color = theme.text;
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!loading) {
+            e.currentTarget.style.backgroundColor = theme.text;
+            e.currentTarget.style.color = theme.background;
+          }
+        }}
       >
         {loading ? "Creating account..." : "Create account"}
       </button>

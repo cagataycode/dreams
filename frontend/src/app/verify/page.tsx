@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { account } from "../../lib/appwrite";
+import Link from "next/link";
+import { useTheme } from "../../lib/theme-context";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
+  const { theme } = useTheme();
   const [status, setStatus] = useState<"verifying" | "success" | "error">(
     "verifying"
   );
@@ -14,16 +18,33 @@ export default function VerifyPage() {
   useEffect(() => {
     const verifyEmail = async () => {
       try {
-        const userId = searchParams.get("userId");
-        const secret = searchParams.get("secret");
+        // Supabase uses token_hash from the URL
+        const token =
+          searchParams.get("token_hash") || searchParams.get("token");
+        const type = searchParams.get("type") || "email";
 
-        if (!userId || !secret) {
-          throw new Error("Missing verification parameters");
+        if (!token) {
+          throw new Error("Missing verification token");
         }
 
-        await account.updateVerification(userId, secret);
+        const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token, type }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || "Verification failed");
+        }
+
+        const result = await response.json();
         setStatus("success");
-        setMessage("Email verified successfully! You can now sign in.");
+        setMessage(
+          result.message || "Email verified successfully! You can now sign in."
+        );
       } catch (error) {
         setStatus("error");
         setMessage(
@@ -36,18 +57,27 @@ export default function VerifyPage() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ backgroundColor: theme.background }}
+    >
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2
+            className="mt-6 text-3xl font-extrabold"
+            style={{ color: theme.text }}
+          >
             Email Verification
           </h2>
 
           <div className="mt-8">
             {status === "verifying" && (
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <p className="ml-3 text-gray-600 dark:text-gray-300">
+                <div
+                  className="animate-spin rounded-full h-8 w-8 border-b-2"
+                  style={{ borderColor: theme.text }}
+                ></div>
+                <p className="ml-3" style={{ color: theme.text, opacity: 0.7 }}>
                   {message}
                 </p>
               </div>
@@ -55,25 +85,37 @@ export default function VerifyPage() {
 
             {status === "success" && (
               <div className="text-center">
-                <div className="text-green-600 text-lg mb-4">{message}</div>
-                <a
+                <div className="text-lg mb-4" style={{ color: "#22c55e" }}>
+                  {message}
+                </div>
+                <Link
                   href="/"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="inline-block font-bold py-2 px-4 rounded transition-theme"
+                  style={{
+                    backgroundColor: theme.text,
+                    color: theme.background,
+                  }}
                 >
                   Go to Sign In
-                </a>
+                </Link>
               </div>
             )}
 
             {status === "error" && (
               <div className="text-center">
-                <div className="text-red-600 text-lg mb-4">{message}</div>
-                <a
+                <div className="text-lg mb-4" style={{ color: "#ef4444" }}>
+                  {message}
+                </div>
+                <Link
                   href="/"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="inline-block font-bold py-2 px-4 rounded transition-theme"
+                  style={{
+                    backgroundColor: theme.text,
+                    color: theme.background,
+                  }}
                 >
                   Back to Home
-                </a>
+                </Link>
               </div>
             )}
           </div>
