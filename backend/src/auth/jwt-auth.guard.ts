@@ -19,7 +19,7 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      // In a real implementation, you'd verify the token with Appwrite
+      // In a real implementation, you'd verify the token with Supabase
       // For now, this is a placeholder
       const payload = this.jwtService.verify(token);
       request.user = payload;
