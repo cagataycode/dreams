@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { useAuth } from "../lib/auth-context";
+import { useTheme } from "../lib/theme-context";
 import LoginForm from "../components/auth/login-form";
 import RegisterForm from "../components/auth/register-form";
+import Dashboard from "../components/dashboard/dashboard";
 
 export default function Home() {
   const { user, loading, logout } = useAuth();
+  const { theme } = useTheme();
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
   if (loading) {
@@ -21,34 +24,26 @@ export default function Home() {
   }
 
   if (user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Welcome to Dreams, {user.name}!
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-            Your journey starts here
-          </p>
-          <button
-            onClick={logout}
-            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Sign Out
-          </button>
-        </div>
-      </div>
-    );
+    return <Dashboard />;
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+      style={{ backgroundColor: theme.background }}
+    >
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2
+            className="mt-6 text-center text-3xl font-extrabold"
+            style={{ color: theme.text }}
+          >
             Welcome to Dreams
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p
+            className="mt-2 text-center text-sm"
+            style={{ color: theme.text, opacity: 0.7 }}
+          >
             Your journey starts here
           </p>
         </div>
@@ -58,28 +53,39 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setAuthMode("login")}
-              className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-l-md ${
-                authMode === "login"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
-              }`}
+              className="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-l-md transition-theme"
+              style={{
+                backgroundColor: authMode === "login" ? theme.text : theme.card,
+                color: authMode === "login" ? theme.background : theme.text,
+                border: `1px solid ${theme.border}`,
+                borderRight: "none",
+              }}
             >
               Sign In
             </button>
             <button
               type="button"
               onClick={() => setAuthMode("register")}
-              className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-r-md ${
-                authMode === "register"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"
-              }`}
+              className="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-r-md transition-theme"
+              style={{
+                backgroundColor:
+                  authMode === "register" ? theme.text : theme.card,
+                color: authMode === "register" ? theme.background : theme.text,
+                border: `1px solid ${theme.border}`,
+                borderLeft: "none",
+              }}
             >
               Sign Up
             </button>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div
+            className="py-8 px-4 shadow sm:rounded-lg sm:px-10"
+            style={{
+              backgroundColor: theme.card,
+              border: `1px solid ${theme.border}`,
+            }}
+          >
             {authMode === "login" ? <LoginForm /> : <RegisterForm />}
           </div>
         </div>
